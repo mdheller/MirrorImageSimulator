@@ -16,16 +16,16 @@ good = '\033[1;32m[+]\033[1;m '
 run = '\033[1;97m[~]\033[1;m '
 
 valid_mirrors = ["converging", "diverging", "concave", "convex"]
-YES = ["yes", "yup", "yeah", "ya", "sure"]
-NO = ["no", "nope", "never", "not really"]
+YES = ["yes", "yup", "yeah", "ya", "sure", "affirmative"]
+NO = ["no", "nope", "never", "not really", "negative"]
 
 
 def get_random_no():
-    return random.choice(NO)
+    return random.choice(NO).title()
 
 
 def get_random_yes():
-    return random.choice(YES)
+    return random.choice(YES).title()
 
 
 def complete_mirrors(text, state):
@@ -65,22 +65,30 @@ def get_type_of_mirror_lense():
 
 
 def calculate_concave(length_object_mirror, length_focal_point):
-    if length_object_mirror == length_focal_point:
-        print(bad + "No Image")
-        exit(0)
     calculation = []
-    if length_focal_point > length_object_mirror:
+    if length_focal_point * 2 < length_object_mirror:
+        calculation.append(get_random_yes())  # Real?
+        calculation.append(get_random_no())  # Erected?
+        calculation.append(get_random_yes())  # Magnification?
+    elif length_focal_point * 2 == length_object_mirror:
         calculation.append(get_random_yes())  # Real?
         calculation.append(get_random_no())  # Erected?
         calculation.append(get_random_no())  # Magnification?
-    else:
+    elif length_focal_point * 2 > length_object_mirror and length_object_mirror > length_focal_point:
+        calculation.append(get_random_no())  # Real?
+        calculation.append(get_random_yes())  # Erected?
+        calculation.append(get_random_yes())  # Magnification?
+    elif length_object_mirror == length_focal_point:
+        print(bad + "No Image")
+        exit(0)
+    elif length_focal_point > length_object_mirror:
         calculation.append(get_random_no())  # Real?
         calculation.append(get_random_yes())  # Erected?
         calculation.append(get_random_yes())  # Magnification?
     return calculation
 
 
-def calculate_convex(length_object_mirror, length_focal_point):
+def calculate_diverging_convex(length_object_mirror, length_focal_point):
     calculation = []
     calculation.append(get_random_no())  # Real?
     calculation.append(get_random_yes())  # Erected?
@@ -89,30 +97,26 @@ def calculate_convex(length_object_mirror, length_focal_point):
 
 
 def calculate_converging(length_object_mirror, length_focal_point):
-    if length_object_mirror == length_focal_point:
-        print(bad + "No Image")
-        exit(0)
     calculation = []
-    if length_focal_point > length_object_mirror:
-        # ?
+    if length_focal_point * 2 < length_object_mirror:
+        calculation.append(get_random_yes())  # Real?
+        calculation.append(get_random_no())  # Erected?
+        calculation.append(get_random_yes())  # Magnification?
+    elif length_focal_point * 2 == length_object_mirror:
         calculation.append(get_random_yes())  # Real?
         calculation.append(get_random_no())  # Erected?
         calculation.append(get_random_no())  # Magnification?
-    else:
-        calculation.append(get_random_no())  # Real?
+    elif length_focal_point * 2 > length_object_mirror and length_object_mirror > length_focal_point:
+        calculation.append(get_random_yes())  # Real?
         calculation.append(get_random_no())  # Erected?
-        if length_focal_point * 2 == length_object_mirror:
-            calculation.append(get_random_no())  # Magnification?
-        else:
-            calculation.append(get_random_yes())  # Magnification?
-    return calculation
-
-
-def calculate_diverging(length_object_mirror, length_focal_point):
-    calculation = []
-    calculation.append(get_random_yes())  # Real?
-    calculation.append(get_random_yes())  # Erected?
-    calculation.append(get_random_yes())  # Magnification?
+        calculation.append(get_random_yes())  # Magnification?
+    elif length_object_mirror == length_focal_point:
+        print(bad + "No Image")
+        exit(0)
+    elif length_focal_point > length_object_mirror:
+        calculation.append(get_random_no())  # Real?
+        calculation.append(get_random_yes())  # Erected?
+        calculation.append(get_random_yes())  # Magnification?
     return calculation
 
 
@@ -123,12 +127,10 @@ def calculate():
         type_of_mirror_lense = get_type_of_mirror_lense()
         if type_of_mirror_lense == "concave":
             return calculate_concave(length_object_mirror, length_focal_point)
-        elif type_of_mirror_lense == "convex":
-            return calculate_convex(length_object_mirror, length_focal_point)
+        elif type_of_mirror_lense == "convex" or type_of_mirror_lense == "diverging":
+            return calculate_diverging_convex(length_object_mirror, length_focal_point)
         elif type_of_mirror_lense == "converging":
             return calculate_converging(length_object_mirror, length_focal_point)
-        elif type_of_mirror_lense == "diverging":
-            return calculate_diverging(length_object_mirror, length_focal_point)
         else:
             print(bad + "Could not calculate")
             exit(1)
